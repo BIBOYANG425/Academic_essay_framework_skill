@@ -4,11 +4,11 @@
 
 **Goal:** Build a 10-skill Claude Code workflow (1 orchestrator + 9 sub-skills) that decomposes the existing monolithic SKILL.md into fine-grained stages, while keeping the Desktop `.skill` distribution unchanged.
 
-**Architecture:** Orchestrator + standalone subs, per `docs/plans/2026-04-17-claude-code-workflow-design.md`. Each SKILL.md is a Markdown file with YAML frontmatter (`name`, `description`). Sub-skills communicate via named output files in a per-essay workspace — file existence is the state. Only the orchestrator knows chain order; sub-skills never reference each other by name.
+**Architecture:** Orchestrator + standalone subs, per `docs/plans/2026-04-17-claude-code-upgrade-design.md`. Each SKILL.md is a Markdown file with YAML frontmatter (`name`, `description`). Sub-skills communicate via named output files in a per-essay workspace — file existence is the state. Only the orchestrator knows chain order; sub-skills never reference each other by name.
 
 **Tech Stack:** Markdown + YAML for skills; shell (`pandoc`, `pdftotext`, `zip`) for tooling; Claude Code built-in Read/Grep/Bash/WebSearch/WebFetch for skill I/O.
 
-**Branch:** Work on `claude-code-workflow`. Keep `main` clean until restructure is proven end-to-end.
+**Branch:** Work on `claude-code-upgrade`. Keep `main` clean until restructure is proven end-to-end.
 
 **Source of truth for content:** The existing `academic-essay-framework/SKILL.md` contains all the framework rules, scholar-matching logic, quote-verification habits, and style prohibitions. Each sub-skill's body lifts and narrows the relevant section(s). The plan specifies frontmatter (which must be exact, since it controls activation) and points at which SKILL.md sections to lift for each body. Do not rewrite the rules from scratch — preserve the specific examples (Winner page-121 misquote, Roy / Bullard / Pulido scholar-source pairings) verbatim.
 
@@ -22,10 +22,10 @@
 
 **Step 1:** Create and switch to branch.
 ```bash
-git checkout -b claude-code-workflow
+git checkout -b claude-code-upgrade
 git status
 ```
-Expected: "On branch claude-code-workflow, nothing to commit, working tree clean"
+Expected: "On branch claude-code-upgrade, nothing to commit, working tree clean"
 
 ### Task 2: Move Desktop skill into `desktop/` subdir
 
@@ -566,15 +566,15 @@ git add claude-code/TESTING.md
 git commit -m "docs(testing): record dog-food session results"
 ```
 
-### Task 19: Merge `claude-code-workflow` branch to `main`
+### Task 19: Merge `claude-code-upgrade` branch to `main`
 
 **Files:** none (git only)
 
 **Step 1:** Confirm all tasks above are committed and pushed to origin on the feature branch.
 ```bash
 git status   # expect clean
-git log --oneline main..claude-code-workflow  # review the full commit series
-git push origin claude-code-workflow
+git log --oneline main..claude-code-upgrade  # review the full commit series
+git push origin claude-code-upgrade
 ```
 
 **Step 2:** Ask the user: merge to `main` directly, or open a PR for review? Default recommendation: open a PR so the full commit series has a reviewable diff on GitHub.
@@ -582,7 +582,7 @@ git push origin claude-code-workflow
 **Step 3:** If direct merge:
 ```bash
 git checkout main
-git merge --no-ff claude-code-workflow -m "Merge claude-code-workflow: split Desktop and Claude Code distributions"
+git merge --no-ff claude-code-upgrade -m "Merge claude-code-upgrade: split Desktop and Claude Code distributions"
 git push origin main
 ```
 
@@ -595,8 +595,8 @@ gh pr create --title "Split Desktop and Claude Code distributions; build 10-skil
 - Orchestrator has decision table, mid-flow resume/redo/skip, and autoplan mode with taste-decision gate
 - Adds claude-code/TESTING.md with activation prompts and manual test paths
 
-Design: docs/plans/2026-04-17-claude-code-workflow-design.md
-Plan: docs/plans/2026-04-17-claude-code-workflow-implementation.md
+Design: docs/plans/2026-04-17-claude-code-upgrade-design.md
+Plan: docs/plans/2026-04-17-claude-code-upgrade-implementation.md
 
 ## Test plan
 - [ ] All 10 skills activate on their TESTING.md trigger prompts in a fresh Claude Code session
