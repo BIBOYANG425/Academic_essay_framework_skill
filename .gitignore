@@ -1,0 +1,9 @@
+.DS_Store
+*.swp
+*.swo
+__pycache__/
+*.pyc
+.vscode/
+.idea/
+node_modules/
+.Rhistory

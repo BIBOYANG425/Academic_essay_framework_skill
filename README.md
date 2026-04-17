@@ -10,11 +10,29 @@ The framework uses four paragraphs: an introduction that moves hook, bridge, the
 
 ## Installation
 
-Download the `academic-essay-framework.skill` file from this repository and install it through Claude's settings. In the Claude web or mobile app, open Settings, navigate to the Skills section, and upload the `.skill` file. Once installed, the skill will trigger automatically whenever your request resembles academic writing help, even if you do not name the framework explicitly.
+The skill ships in two formats from the same source. Pick the one matching how you use Claude.
+
+### Claude Desktop, mobile, or web
+
+Download `academic-essay-framework.skill` from this repository, open Settings, go to the Skills section, and upload the `.skill` file.
+
+### Claude Code
+
+Place the `academic-essay-framework/` directory inside your Claude Code skills folder. Either copy it or symlink it from a local clone of this repo.
+
+```bash
+# User-wide, available in every project
+cp -r academic-essay-framework ~/.claude/skills/
+
+# Or scoped to a single project
+cp -r academic-essay-framework /path/to/project/.claude/skills/
+```
+
+Once installed in either environment, the skill triggers automatically whenever your request resembles academic writing help, even if you do not name the framework explicitly.
 
 ## Structure
 
-The `academic-essay-framework/` directory contains the skill source, including `SKILL.md` with the full framework specification. The `academic-essay-framework.skill` file at the repository root is the packaged, installable version.
+The `academic-essay-framework/` directory contains the skill source, including `SKILL.md` with the full framework specification. Claude Code loads this directory directly. The `academic-essay-framework.skill` file at the repository root is the zipped, Desktop-installable version of the same content.
 
 ## How the framework came together
 
