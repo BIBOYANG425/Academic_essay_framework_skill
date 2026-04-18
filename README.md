@@ -14,11 +14,20 @@ The skill ships in two formats from the same source, each in its own top-level d
 
 ### Desktop / mobile / web
 
-Download `desktop/academic-essay-framework.skill` from this repository, open Settings, go to the Skills section, and upload the `.skill` file. Once installed, the skill triggers automatically whenever your request resembles academic writing help, even if you do not name the framework explicitly.
+Download `desktop/academic-essay-framework.skill` directly from the GitHub UI (click the file, then the download-raw button). Open Claude's Settings → Skills and upload the `.skill` file. Once installed, the skill triggers automatically whenever your request resembles academic writing help, even if you do not name the framework explicitly. No other setup required.
 
 ### Claude Code
 
-Claude Code uses a fine-grained, multi-skill workflow: one orchestrator (`academic-essay`) plus nine stage sub-skills (clarify-topic, collect-materials, find-sources, draft, quote-verify, scholar-match, framework-check, style-check, export). Install all ten as a family — the sub-skills activate automatically when their conditions are met, but most users invoke the orchestrator and let it coordinate the stages.
+Claude Code uses a fine-grained, multi-skill workflow: one orchestrator (`academic-essay`) plus nine stage sub-skills (clarify-topic, collect-materials, find-sources, scholar-match, framework-check, quote-verify, draft, style-check, export). Install all ten as a family. Sub-skills activate automatically when their conditions are met, but most users invoke the orchestrator and let it coordinate the stages.
+
+**1. Clone the repo:**
+
+```bash
+git clone https://github.com/BIBOYANG425/Academic_essay_framework_skill.git
+cd Academic_essay_framework_skill
+```
+
+**2. Copy the ten skill directories into your Claude Code skills folder.** Pick one scope:
 
 ```bash
 # User-wide, available in every project
@@ -28,11 +37,30 @@ cp -r claude-code/academic-essay* ~/.claude/skills/
 cp -r claude-code/academic-essay* /path/to/project/.claude/skills/
 ```
 
-Verify all ten skills installed:
+**3. Verify all ten skills installed:**
 
 ```bash
 ls ~/.claude/skills/ | grep academic-essay | wc -l   # expect 10
 ```
+
+**4. Install pandoc (one-time prerequisite for the export stage).** The final stage produces a `.docx` with Times New Roman 12pt, double-spacing, and page numbers using `pandoc` and the bundled `humanities-template.docx`. Earlier stages work without pandoc, but `essay.docx` export will fail cleanly if it is missing.
+
+```bash
+# macOS
+brew install pandoc
+
+# Debian / Ubuntu
+sudo apt-get install pandoc
+
+# Fedora / RHEL
+sudo dnf install pandoc
+
+# Windows: download the installer from https://pandoc.org/installing.html
+```
+
+**5. First use.** Start a fresh Claude Code session in an empty directory for the essay (e.g., `mkdir ~/essays/my-first-essay && cd $_`). Paste your assignment prompt. The `academic-essay` orchestrator will pick it up, inspect the empty workspace, and kick off `academic-essay-clarify-topic` to interview you. Every stage writes one named file (`topic.md`, `materials.md`, `scholars.md`, `draft.md`, and so on) into the workspace directory, so you can resume mid-flow in a new session by re-invoking the orchestrator from the same folder.
+
+If a skill does not activate when you expect it to, consult `claude-code/TESTING.md` for the known trigger prompts per skill.
 
 ## Structure
 
