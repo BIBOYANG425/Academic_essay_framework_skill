@@ -82,6 +82,18 @@ Autoplan mode is NOT the default. Do not enter it on ambiguous requests like "co
 - Each sub-skill invocation carries an `auto=true` hint in its context. Sub-skills that have an autoplan contract read this hint and adapt their behavior: proceed silently when calls are unambiguous, pause and return control to the orchestrator when they hit a taste-decision condition.
 - When a sub-skill pauses and returns control, the orchestrator drops out of auto-walking and surfaces the sub-skill's question to the user. Once the user answers, the orchestrator resumes autoplan from the next stage.
 
+### Post-draft parallel fan-out
+
+Autoplan makes one structured exception to the otherwise-sequential chain. Once `academic-essay-draft` has written `draft.md`, the next two stages — `academic-essay-quote-verify` and `academic-essay-style-check` — both read `draft.md` as their only input and produce independent output files (`quote-verification.md` and `style-audit.md`). Neither reads the other's output, so running them sequentially only adds latency without improving reasoning quality.
+
+When autoplan detects that both of the following are true immediately after `draft.md` is written:
+- `quote-verification.md` is missing or older than `draft.md`
+- `style-audit.md` is missing or older than `draft.md`
+
+it invokes `academic-essay-quote-verify` and `academic-essay-style-check` **in parallel**, issuing both sub-skill calls in a single batch rather than awaiting one before starting the other. Both receive the `auto=true` hint. After both return, the orchestrator re-reads workspace state and re-evaluates the decision table. If either paused at a taste-gate condition, the orchestrator surfaces that gate to the user; the other skill's output (already written to its file) stays intact and is not re-run.
+
+This is the only sanctioned parallel fan-out in the workflow. All other stages remain strictly sequential.
+
 ### Taste-gate conditions (pause autoplan)
 
 These are the conditions under which a sub-skill must pause and hand control back. The orchestrator does not evaluate these itself — each sub-skill's autoplan contract does. They are listed here so the orchestrator knows what to expect.
@@ -124,7 +136,7 @@ The user can break out of autoplan mode at any time by saying "pause", "stop aut
 - When the orchestrator invokes a sub-skill, it passes the workspace path as the context. The sub-skill reads and writes inside that workspace.
 - Sub-skills produce their output file, then return to the orchestrator. They do not chain forward on their own.
 - After each sub-skill returns, re-read the workspace state and re-run the decision table. State changes between every stage.
-- Do NOT invoke two sub-skills in parallel. This workflow is strictly sequential for reasoning consistency — later stages depend on the reasoning captured in earlier outputs, not just their file existence.
+- Do NOT invoke two sub-skills in parallel in general. The workflow is sequential for reasoning consistency, because later stages depend on the reasoning captured in earlier outputs, not just on file existence. The single sanctioned exception is the post-draft fan-out in autoplan mode (see section D): `academic-essay-quote-verify` and `academic-essay-style-check` can run in parallel after `draft.md` is written because they share `draft.md` as their only input and produce independent output files. Do not extend parallel invocation to any other stage pair.
 
 ## F. Scope — what the orchestrator does NOT do
 

@@ -1,6 +1,6 @@
 ---
 name: academic-essay-style-check
-description: Use when a draft.md exists and needs a style audit before export. Scans for em dashes (banned), banned phrases and overused transitions, buzzword clichés, and restricted-word overuse (corporate jargon cluster and vague-qualifier cluster capped at two uses per essay). Preserves the banned-phrase and restricted-word lists verbatim from the original academic-essay-framework skill. Trigger when the user asks to check style, audit jargon, or polish the draft. Produces style-audit.md with findings and suggested specific replacements.
+description: Use when a draft.md exists and needs a style audit and fact-check before export. Scans for em dashes (banned), explanatory colons (banned), banned phrases and overused transitions, buzzword clichés, restricted-word overuse (corporate jargon cluster and vague-qualifier cluster capped at two uses per essay), and empirical-claim fact-check (verifies specific numbers, dates, people, institutions, policies, and rulings against authoritative sources via WebSearch). Preserves the banned-phrase, restricted-word, and fact-check rules verbatim from the original academic-essay-framework skill. Trigger when the user asks to check style, audit jargon, fact-check the draft, or polish before export. Produces style-audit.md with findings and suggested specific replacements.
 ---
 
 # academic-essay-style-check
@@ -23,12 +23,13 @@ Run these scans in order. Use `Grep` for literal-string matches against `draft.m
 3. **Banned phrases.** For each phrase in the "Banned phrases" subsection below, `Grep` case-insensitively against `draft.md`. Record the line, the matched phrase, and the surrounding sentence.
 4. **Restricted-word clusters.** For each word in the corporate-jargon cluster and each word in the vague-qualifiers cluster, count occurrences across the whole draft. Use a word-boundary regex (e.g., `\bleverage\b`) so that substrings inside larger words do not inflate the count. Cluster totals beyond two are over budget. Report both the per-word counts and the cluster total.
 5. **Overused transitions.** Count occurrences of `Moreover`, `Furthermore`, and `Additionally`. Flag any use beyond once per 800 words of draft body. Compute draft body word count with `wc -w draft.md`. Cap per transition word = max(1, floor(word_count / 800)). Flag any two consecutive paragraphs that both start with `However` or `Therefore`. Detect two consecutive paragraphs starting with the same transition using a multiline regex: `rg --multiline -P '(?m)^(However|Therefore)[^\n]*\n\n(?:^(?!#)[^\n]*\n+)*?(However|Therefore)'` — if the capture groups match the same word, flag. Flag any `X isn't the problem, Y is` construction and any rule-of-three list packed into a single sentence. For `X isn't the problem, Y is`: regex `\b(isn'?t|is not) (the|a) \w+,\s+\w+ is\b`. For rule-of-three-in-one-sentence: this is hard to detect mechanically; read the draft once end-to-end after mechanical scans and flag any sentence containing three comma-separated items in parallel form that appear rhetorical rather than enumerative.
+6. **Fact-check empirical claims.** Read the draft end-to-end and identify every sentence that contains a checkable piece of fact: a specific number or statistic, a date, a named person, a named institution, a named policy or bill, a court ruling, a concrete historical event. For each, form a focused `WebSearch` query (e.g., `"EPA endangerment finding rescission 2026 date"` or `"Italy 33 hours climate education mandate year"`) and run it. Compare the top results to the claim and mark it with one of four statuses: **Verified** (authoritative sources report the claim directly), **Partially verified** (general framing supported but a specific detail looks off — note the detail), **Not found** (claim cannot be located in accessible sources — flag for the user to supply a primary source or drop the claim), or **Contradicted** (authoritative sources disagree — claim must be removed or rewritten). Prefer primary/authoritative sources (government agency pages, peer-reviewed journals, legal-scholarly databases, major news of record, institutional NGO publications). Treat advocacy blogs, opinion pieces, and paraphrased summaries as non-authoritative; a claim that only appears in those is not verified. Skip pure argumentative or interpretive sentences — this scan is for claims of fact, not claims of judgment. When an authoritative URL supports the claim, record the URL alongside the status.
 
 Every finding cites the `draft.md` line number and proposes a concrete replacement grounded in the primary source or the essay's own vocabulary, not a generic synonym.
 
 ## The lifted rules
 
-The four subsections below are lifted verbatim from `desktop/academic-essay-framework/SKILL.md`. They are the contract this skill enforces. Do not paraphrase, abridge, or reorder the lists.
+The five subsections below are lifted verbatim from `desktop/academic-essay-framework/SKILL.md`. They are the contract this skill enforces. Do not paraphrase, abridge, or reorder the lists.
 
 ### Em dash ban
 
@@ -59,6 +60,16 @@ Corporate jargon cluster: leverage, optimize, enhance, utilize, synergy, deliver
 Vague qualifiers: significant, relevant, dynamic, innovative, comprehensive, robust, streamlined.
 
 When editing drafts, flag any of these words that appear more than twice and suggest specific replacements with concrete, historically grounded language.
+
+### Fact-check for empirical claims
+
+Every empirical claim in the draft has to be independently verifiable. Identify any claim that names a specific number, date, named person, institution, policy, court ruling, statistic, or concrete event, and confirm it against an authoritative source before treating it as settled. Prefer primary and authoritative sources in this order: government agency pages and official press releases, peer-reviewed journal articles, legal-scholarly databases (Sabin Center, Columbia Law Blog), news coverage of record (Reuters, Associated Press, major newspapers), and institutional NGO publications (EDF, UCS, NAAEE). Treat a claim as verified only when an authoritative source states it directly; treat a claim that only appears in advocacy blogs, opinion pieces, or paraphrased summaries as unverified and flag it.
+
+Mark each checked claim with one of four statuses. Verified means the claim matches what authoritative sources report. Partially verified means the general framing is supported but a specific detail (number, date, scope) may be off. Not found means the claim cannot be located in accessible sources, in which case the student has to produce a primary source or drop the claim before submission. Contradicted means authoritative sources directly disagree with the claim, in which case the claim must be removed or rewritten.
+
+This is especially load-bearing when the essay's argument rests on a specific empirical detail. A recent session caught a claim about an Italian Ministry of Education 2022 assessment finding no shift in student policy positions; the 33-hour climate-education mandate itself is real and verifiable, but the specific 2022 assessment finding could not be located in accessible sources and had to be flagged. Catching an unsupported claim before submission is cheaper than defending it after a reader checks it.
+
+Fact-check is for claims of fact, not claims of judgment or interpretation. Skip pure argumentative sentences; apply the check to the specific, checkable pieces the argument rests on.
 
 ## Output file: `style-audit.md`
 
@@ -96,6 +107,13 @@ The exact file contents (strip the fence markers when writing).
 - Vague qualifiers cluster total: X of 2 allowed
   - (same shape)
 - (write "Both clusters within cap" if clean)
+
+## Facts checked
+- `draft.md` line N: "<the claim sentence>"
+  - Status: Verified / Partially verified / Not found / Contradicted
+  - Source: <authoritative URL, or "none found">
+  - Note: <one-line explanation of the finding; cite the specific number/date/name that matches or conflicts>
+- (repeat per claim; write "No empirical claims flagged — argumentative prose only" if the draft contains no checkable facts)
 ```
 
 Keep every suggested replacement specific. Do not suggest "use a more concrete word" without naming the word. When a banned phrase appears in a thesis or topic sentence, propose a replacement that preserves the claim's intellectual work, not just its grammar.
@@ -116,6 +134,6 @@ If the user declines, leave `draft.md` untouched and stop.
 Stop when both are true:
 
 - `style-audit.md` is written in the workspace.
-- The user has either declined a rewrite, or approved one and the post-rewrite scan confirms zero em dashes, zero explanatory colons (non-mechanical), zero banned phrases, and both clusters back within the two-uses cap.
+- The user has either declined a rewrite, or approved one and the post-rewrite scan confirms zero em dashes, zero explanatory colons (non-mechanical), zero banned phrases, both clusters back within the two-uses cap, and zero fact-check claims in `Not found` or `Contradicted` status (user has resolved each flagged claim by supplying a source, rewriting, or dropping it).
 
 Do not run framework-structure checks, quote verification, or export from this skill. Those are `academic-essay-framework-check`, `academic-essay-quote-verify`, and `academic-essay-export` respectively.
