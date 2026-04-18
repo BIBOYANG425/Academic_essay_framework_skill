@@ -25,7 +25,15 @@ When evaluating scholar choices, ask: does this scholar's framework name the exa
 
 Every evaluation in this skill reduces to one question: **does this scholar's framework name the exact mechanism the source reveals?** If the framework requires a persistent community and the source has none, the answer is no. If the framework is about design encoding politics and the source is a design document, the answer is yes. Do not soften a "no" into a "maybe" to keep a scholar the user has grown attached to — a mismatched scholar surfaces in professor feedback almost every time, and it is cheaper to swap now than to rewrite the essay later.
 
-When multiple candidates compete, answer the diagnostic question for each one and pick the scholar whose framework names the tightest mechanism. Ties are rare; if two candidates genuinely tie, surface the tie to the user rather than picking silently.
+When multiple candidates compete, answer the diagnostic question for each one and pick the scholar whose framework names the tightest mechanism. Prefer to find the tighter fit; if you cannot, pause rather than force a pick. If two candidates genuinely tie, surface the tie to the user rather than picking silently.
+
+## Autoplan contract
+
+When invoked in autoplan mode (`auto=true`), two conditions pause and return control to the orchestrator:
+- (a) Two or more candidate scholars genuinely tie on the diagnostic question.
+- (b) No candidate passes the diagnostic against the primary source's mechanics.
+
+In both cases, write what you have so far to `scholars.md` (including rejected candidates and reasons), and surface the tie or the floor-miss explicitly in the output so the orchestrator can route the taste-gate prompt to the user.
 
 ## Output file: `scholars.md`
 
