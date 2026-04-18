@@ -10,29 +10,35 @@ The framework uses four paragraphs: an introduction that moves hook, bridge, the
 
 ## Installation
 
-The skill ships in two formats from the same source. Pick the one matching how you use Claude.
+The skill ships in two formats from the same source, each in its own top-level directory. Pick the one matching how you use Claude.
 
-### Claude Desktop, mobile, or web
+### Desktop / mobile / web
 
-Download `academic-essay-framework.skill` from this repository, open Settings, go to the Skills section, and upload the `.skill` file.
+Download `desktop/academic-essay-framework.skill` from this repository, open Settings, go to the Skills section, and upload the `.skill` file. Once installed, the skill triggers automatically whenever your request resembles academic writing help, even if you do not name the framework explicitly.
 
 ### Claude Code
 
-Place the `academic-essay-framework/` directory inside your Claude Code skills folder. Either copy it or symlink it from a local clone of this repo.
+Claude Code uses a fine-grained, multi-skill workflow: one orchestrator (`academic-essay`) plus nine stage sub-skills (clarify-topic, collect-materials, find-sources, draft, quote-verify, scholar-match, framework-check, style-check, export). Install all ten as a family — the sub-skills activate automatically when their conditions are met, but most users invoke the orchestrator and let it coordinate the stages.
 
 ```bash
 # User-wide, available in every project
-cp -r academic-essay-framework ~/.claude/skills/
+cp -r claude-code/academic-essay* ~/.claude/skills/
 
 # Or scoped to a single project
-cp -r academic-essay-framework /path/to/project/.claude/skills/
+cp -r claude-code/academic-essay* /path/to/project/.claude/skills/
 ```
 
-Once installed in either environment, the skill triggers automatically whenever your request resembles academic writing help, even if you do not name the framework explicitly.
+Verify all ten skills installed:
+
+```bash
+ls ~/.claude/skills/ | grep academic-essay | wc -l   # expect 10
+```
 
 ## Structure
 
-The `academic-essay-framework/` directory contains the skill source, including `SKILL.md` with the full framework specification. Claude Code loads this directory directly. The `academic-essay-framework.skill` file at the repository root is the zipped, Desktop-installable version of the same content.
+- `desktop/` — monolithic Desktop distribution. Contains `academic-essay-framework.skill` (the uploadable bundle), the unpacked `academic-essay-framework/` source, and a root-level `academic-essay-framework-SKILL.md` for GitHub preview. Behavior is unchanged from the previous version of this repo.
+- `claude-code/` — fine-grained Claude Code distribution. Ten skill directories (one orchestrator + nine stage sub-skills, all under `academic-essay*` prefixes) plus `TESTING.md` describing how the workflow was validated.
+- `docs/plans/` — design doc and implementation plan for the Claude Code workflow split.
 
 ## How the framework came together
 
