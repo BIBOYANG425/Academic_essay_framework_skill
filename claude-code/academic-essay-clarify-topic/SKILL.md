@@ -38,9 +38,13 @@ Walk through these seven items in order. Skip any item the user has already answ
 
 Ask one thing at a time. Do not stack "what's the discipline and what's the due date?" into a single question — users answer the last thing they read and the first question gets dropped. Wait for the answer, acknowledge it briefly (one line), then ask the next item on the checklist. When the answer space is small and nameable, offer 3–5 multiple-choice options plus "other" rather than an open prompt.
 
+Acknowledge the previous answer in one line, then ask exactly one next question. Do not combine the acknowledgment with two follow-ups, and do not list "and also" questions.
+
 ## Output file: `topic.md`
 
-When the interview is done, write a plain-markdown `topic.md` (no YAML frontmatter) in the workspace with exactly these six sections, in this order:
+When the interview is done, write a plain-markdown `topic.md` (no YAML frontmatter) in the workspace with the `# Topic` H1 and exactly these six H2 sections, in this order:
+
+The exact file contents (strip the fence markers when writing).
 
 ```markdown
 # Topic
@@ -70,5 +74,9 @@ Stop asking questions and write `topic.md` as soon as either is true:
 
 - The user says some version of "that's enough, let's move on" / "move on" / "I think we have enough" / "stop asking, write it up."
 - Every one of the seven checklist items has an answer (even if the answer is "I don't know" or "lens is open" — those are valid terminal answers and should be recorded verbatim in `topic.md`).
+
+When the user's answer to one checklist item logically answers the next (e.g., "new course, new professor" implicitly answers both #6 and #7), record both answers and skip ahead. Do not re-ask what the user has already answered by implication.
+
+When the user's answer clearly matches a nominal value in the template (e.g., "no prior feedback" → "None", "open lens" → "Lens open"), prefer the nominal value; otherwise record the user's answer verbatim.
 
 Once `topic.md` is written, tell the user the file is saved and that the next skill in the workflow (`academic-essay-collect-materials`) will take it from here. Do not begin collecting materials, searching for sources, or outlining the essay — those are downstream skills' jobs.
