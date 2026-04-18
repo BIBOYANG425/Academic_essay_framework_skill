@@ -71,7 +71,7 @@ Flag these patterns explicitly in the table's Status column or in the prose feed
 - Hook that is abstract rather than grounded in concrete detail — no date, number, proper noun, or image from the primary source.
 - Conclusion that summarizes instead of stating "so what" — no connection to a present-day mechanism, policy, or pattern.
 - Historical inversion in the thesis where the claimed cause came after its supposed effect — the chronology does not support the cause-and-effect.
-- Scholar whose framework does not match the source mechanics — a recurring professor critique that should drive a scholar swap, not a defense.
+- Scholar whose framework does not match the source mechanics — a recurring professor critique that should drive a scholar swap. When this gap fires, flag it in the Status column and recommend re-running `academic-essay-scholar-match`. Do not swap scholars inside this skill.
 
 ## Output file: `framework-review.md`
 
