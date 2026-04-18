@@ -90,6 +90,10 @@ The prose should be precise, historical, and grounded. Direct and concrete. Date
 
 Do not use em dashes anywhere in academic writing output. Use commas, periods, or semicolons instead. This is a hard rule that applies to drafts, revisions, and any prose intended for the essay itself.
 
+### Explanatory colon ban
+
+Do not use a colon to introduce an idea, explanation, or continuation of the sentence. Examples to avoid: writing "The problem" followed by a colon and then "manufactured doubt," or writing "Two structural vulnerabilities made the rollback possible" followed by a colon and then "environmental harm felt distant, and climate science felt complex." Replace with a period and a new sentence, a semicolon, or a sentence restructure that makes the relationship explicit. Colons remain allowed only for mechanical uses where the colon carries no explanatory weight, such as times (10:30), ratios (2:1), chapter or subtitle form ("Title: Subtitle"), and direct dialogue attribution. Enumerative list colons in the middle of a sentence, for instance listing "four dimensions of distance" followed by their names, are borderline; prefer restructuring when possible, but do not treat them as hard violations when the list is short and flows grammatically.
+
 ### Banned phrases
 
 Never use any of the following under any circumstance, in any phrasing, in any context. This applies to the essay output and also to meta-commentary Claude writes alongside the essay.
