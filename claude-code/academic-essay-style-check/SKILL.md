@@ -18,10 +18,10 @@ This is the final prose audit in the academic essay workflow. It runs on an exis
 
 Run these scans in order. Use `Grep` for literal-string matches against `draft.md` and `Bash` counts for cluster totals. Record every match with its line number for the audit file.
 
-1. **Em dashes.** `Grep` for the literal `—` character (U+2014). Every hit is a finding. Also scan for the ASCII double-hyphen `--` in case the draft slipped one in and auto-format did not convert it.
+1. **Em dashes.** `Grep` for the literal `—` character (U+2014). Every hit is a finding. Also scan for the ASCII double-hyphen `--` in case the draft slipped one in and auto-format did not convert it. Skip matches inside fenced code blocks (those appear occasionally in footnotes or sidebar prose).
 2. **Banned phrases.** For each phrase in the "Banned phrases" subsection below, `Grep` case-insensitively against `draft.md`. Record the line, the matched phrase, and the surrounding sentence.
 3. **Restricted-word clusters.** For each word in the corporate-jargon cluster and each word in the vague-qualifiers cluster, count occurrences across the whole draft. Use a word-boundary regex (e.g., `\bleverage\b`) so that substrings inside larger words do not inflate the count. Cluster totals beyond two are over budget. Report both the per-word counts and the cluster total.
-4. **Overused transitions.** Count occurrences of `Moreover`, `Furthermore`, and `Additionally`. Flag any use beyond once per 800 words of draft body. Flag any two consecutive paragraphs that both start with `However` or `Therefore`. Flag any `X isn't the problem, Y is` construction and any rule-of-three list packed into a single sentence.
+4. **Overused transitions.** Count occurrences of `Moreover`, `Furthermore`, and `Additionally`. Flag any use beyond once per 800 words of draft body. Compute draft body word count with `wc -w draft.md`. Cap per transition word = max(1, floor(word_count / 800)). Flag any two consecutive paragraphs that both start with `However` or `Therefore`. Detect two consecutive paragraphs starting with the same transition using a multiline regex: `rg --multiline -P '(?m)^(However|Therefore)[^\n]*\n\n(?:^(?!#)[^\n]*\n+)*?(However|Therefore)'` — if the capture groups match the same word, flag. Flag any `X isn't the problem, Y is` construction and any rule-of-three list packed into a single sentence. For `X isn't the problem, Y is`: regex `\b(isn'?t|is not) (the|a) \w+,\s+\w+ is\b`. For rule-of-three-in-one-sentence: this is hard to detect mechanically; read the draft once end-to-end after mechanical scans and flag any sentence containing three comma-separated items in parallel form that appear rhetorical rather than enumerative.
 
 Every finding cites the `draft.md` line number and proposes a concrete replacement grounded in the primary source or the essay's own vocabulary, not a generic synonym.
 
@@ -93,7 +93,7 @@ Keep every suggested replacement specific. Do not suggest "use a more concrete w
 After `style-audit.md` is written, tell the user the audit is saved and ask whether they want a rewrite pass that applies the suggested replacements back into `draft.md`. Do not rewrite silently.
 
 If the user approves a rewrite:
-1. Copy the current `draft.md` to `.archive/draft-<timestamp>.md` in the workspace before editing. This is non-negotiable. The user must be able to recover the pre-rewrite prose.
+1. Copy the current `draft.md` to `.archive/draft-<YYYYMMDDTHHMMSSZ UTC>.md` in the workspace before editing. This is non-negotiable. The user must be able to recover the pre-rewrite prose.
 2. Apply the replacements from `style-audit.md` in place to `draft.md`.
 3. Re-run the scan once to confirm zero em dashes, zero banned phrases, and both clusters back within cap. If anything is still over, report the residual findings and stop rather than cascade-rewriting.
 
