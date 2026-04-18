@@ -61,6 +61,16 @@ This has caught real misattributions in past work. For example, a Winner quote p
 
 When the primary source is available as a PDF (uploaded to the conversation, attached to project knowledge, or present in the working directory), search it directly. Use whatever extraction path the environment provides: the built-in PDF reading in Claude Desktop, or `pdftotext` / Claude Code's native PDF Read support when running in Claude Code. Confirm the exact wording from the extracted text. When the source is an outside scholar, verify against the primary text rather than a secondary summary.
 
+## Fact-check for empirical claims
+
+Every empirical claim in the draft has to be independently verifiable. Identify any claim that names a specific number, date, named person, institution, policy, court ruling, statistic, or concrete event, and confirm it against an authoritative source before treating it as settled. Prefer primary and authoritative sources in this order: government agency pages and official press releases, peer-reviewed journal articles, legal-scholarly databases (Sabin Center, Columbia Law Blog), news coverage of record (Reuters, Associated Press, major newspapers), and institutional NGO publications (EDF, UCS, NAAEE). Treat a claim as verified only when an authoritative source states it directly; treat a claim that only appears in advocacy blogs, opinion pieces, or paraphrased summaries as unverified and flag it.
+
+Mark each checked claim with one of four statuses. Verified means the claim matches what authoritative sources report. Partially verified means the general framing is supported but a specific detail (number, date, scope) may be off. Not found means the claim cannot be located in accessible sources, in which case the student has to produce a primary source or drop the claim before submission. Contradicted means authoritative sources directly disagree with the claim, in which case the claim must be removed or rewritten.
+
+This is especially load-bearing when the essay's argument rests on a specific empirical detail. A recent session caught a claim about an Italian Ministry of Education 2022 assessment finding no shift in student policy positions; the 33-hour climate-education mandate itself is real and verifiable, but the specific 2022 assessment finding could not be located in accessible sources and had to be flagged. Catching an unsupported claim before submission is cheaper than defending it after a reader checks it.
+
+Fact-check is for claims of fact, not claims of judgment or interpretation. Skip pure argumentative sentences; apply the check to the specific, checkable pieces the argument rests on.
+
 ## Outline review workflow
 
 When the user shares an outline, run the framework check first and substantive feedback second. The useful format is a small table mapping each required move to what the outline actually contains, marking each row with a check mark or a specific gap.
